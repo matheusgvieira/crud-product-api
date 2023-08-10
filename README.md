@@ -4,7 +4,7 @@ This is a sample FastAPI application that demonstrates the implementation of a P
 
 ## Prerequisites
 
-- Python 3.7 or higher
+- Python 3.9 or higher
 - MySQL database
 
 ## Installation
