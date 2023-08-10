@@ -1,7 +1,8 @@
 from fastapi import APIRouter
-from products_api.database.index import engine
+from products_api.database import engine
 from sqlalchemy.exc import SQLAlchemyError
 from fastapi import HTTPException
+from sqlalchemy import text
 
 router = APIRouter()
 

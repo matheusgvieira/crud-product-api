@@ -9,10 +9,10 @@ reload = true
 database = "mysql"
 host = "localhost"
 name = "products_api"
-password = "password"
+password = "root"
 port = 3306
-uri = "mysql://root:password@localhost:3306/products_api"
-user = "root"
+uri = "mysql://admin:root@localhost:3306/products_api"
+user = "admin"
 
 [production]
 dynaconf_merge = true
