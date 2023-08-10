@@ -1,0 +1,16 @@
+[default]
+
+[default.security]
+# Set secret key in .secrets.toml
+# SECRET_KEY = ""
+ACCESS_TOKEN_EXPIRE_MINUTES = 30
+ALGORITHM = "HS256"
+REFRESH_TOKEN_EXPIRE_MINUTES = 600
+
+[default.server]
+host = "127.0.0.1"
+log_level = "info"
+port = 8000
+reload = false
+
+[default.db]

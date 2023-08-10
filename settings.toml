@@ -1,0 +1,28 @@
+[development.server]
+cors_origins = ["http://localhost:3000", "http://localhost:4200"]
+host = "127.0.0.1"
+log_level = "debug"
+port = 8000
+reload = true
+
+[development.database]
+database = "mysql"
+host = "localhost"
+name = "products_api"
+password = "password"
+port = 3306
+uri = "mysql://root:password@localhost:3306/products_api"
+user = "root"
+
+[production]
+dynaconf_merge = true
+
+[production.server]
+log_level = "error"
+reload = false
+
+[testing]
+dynaconf_merge = true
+
+[testing.server]
+cors_origins = ["http://localhost:3000", "http://localhost:4200"]
