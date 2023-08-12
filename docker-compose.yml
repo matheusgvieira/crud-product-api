@@ -1,35 +1,35 @@
-version: '3'
+version: "3"
 services:
-  # fastapi-app:
-  #   build:
-  #     context: .
-  #     dockerfile: Dockerfile
-  #   ports:
-  #     - "8000:8000"
-  #   depends_on:
-  #     - mysql-db
-  #   environment:
-  #     - DATABASE_URL=mysql+pymysql://admin:root@mysql-db/products_api
-  #   command:
-  #     [
-  #       "uvicorn",
-  #       "products_api.app:app",
-  #       "--host",
-  #       "0.0.0.0",
-  #       "--port",
-  #       "8000",
-  #       "--reload"
-  #     ]
+  fastapi-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    depends_on:
+      - mysql-db
+    environment:
+      - DATABASE_URL=mysql+pymysql://admin:root@mysql-db/products_api
+    command:
+      [
+        "uvicorn",
+        "products_api.app:app",
+        "--host",
+        "0.0.0.0",
+        "--port",
+        "8000",
+        "--reload",
+      ]
 
   mysql-db:
     image: mysql:8.0
     ports:
       - "3306:3306"
     environment:
-      MYSQL_ROOT_PASSWORD: root
+      MYSQL_ROOT_PASSWORD: app
       MYSQL_DATABASE: products_api
-      MYSQL_USER: admin
-      MYSQL_PASSWORD: root
+      MYSQL_USER: root
+      MYSQL_PASSWORD: app
     volumes:
       - mysql_data:/var/lib/mysql
 

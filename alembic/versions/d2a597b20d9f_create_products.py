@@ -21,7 +21,7 @@ depends_on: Union[str, Sequence[str], None] = None
 products = Table(
     "products",
     metadata,
-    Column("id", Integer, primary_key=True),
+    Column("id_product", String(255), primary_key=True),
     Column("name", String(255)),
     Column("price", Integer),
 )
