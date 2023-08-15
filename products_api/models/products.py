@@ -2,16 +2,24 @@ from products_api.models.model import (
     find_by_id,
     create,
     update,
-    delete,
+    soft_delete,
     find_all_pagination,
+    count,
+    count_removed,
 )
 from pydantic import BaseModel
+from datetime import datetime
 import uuid
 
 
 class ProductsModelCreate(BaseModel):
     name: str
-    price: int
+    price: float
+
+
+class ProductsModelUpdate(BaseModel):
+    name: str | None = None
+    price: float | None = None
 
 
 class Products:
@@ -28,6 +36,7 @@ class Products:
                     id_product=product[0],
                     name=product[1],
                     price=product[2],
+                    created_at=product[3],
                 )
             )
 
@@ -41,15 +50,23 @@ class Products:
             price=product[2],
         )
 
-    def create(self, data: dict) -> dict:
-        data["id_product"] = uuid.uuid4()
-        create("products", data)
-        return data
+    def create(self, data: BaseModel) -> dict:
+        data_dict = data.dict()
+        data_dict["id_product"] = uuid.uuid4()
+        data_dict["created_at"] = datetime.now()
+        create("products", data_dict)
+        return data_dict
 
     def update(self, id: str, data: dict) -> dict:
         update("products", id, data)
         return data
 
     def delete(self, id: str) -> None:
-        delete("products", id)
+        soft_delete("products", id)
         return None
+
+    def count(self) -> int:
+        return count("products")
+
+    def count_removed(self) -> int:
+        return count_removed("products")

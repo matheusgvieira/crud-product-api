@@ -1,7 +1,8 @@
 from fastapi import APIRouter
 from sqlalchemy.exc import SQLAlchemyError
 from fastapi import HTTPException
-from products_api.models import Products, ProductsModelCreate
+from products_api.models import Products, ProductsModelCreate, ProductsModelUpdate
+from products_api.utils.removes import remove_key_with_value_none
 
 
 router = APIRouter()
@@ -19,8 +20,10 @@ async def list_products(page: int = 1, limit: int = 10):
         return dict(
             error=False,
             items=list(list_products),
-            total=len(list_products),
+            limit=len(list_products),
             page=page,
+            count=products.count(),
+            items_removed=products.count_removed(),
         )
 
     except (SQLAlchemyError, ValueError) as e:
@@ -53,6 +56,38 @@ async def create_product(product: ProductsModelCreate):
         return dict(
             error=False, detail="Product created successfully", item=product_created
         )
+
+    except (SQLAlchemyError, ValueError) as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+
+@router.put(
+    "/{id_products}",
+)
+async def update_product(id_product: str, product: ProductsModelUpdate):
+    try:
+        products = Products()
+        product_updated = products.update(
+            id_product, remove_key_with_value_none(product.dict())
+        )
+
+        return dict(
+            error=False, detail="Product updated successfully", item=product_updated
+        )
+
+    except (SQLAlchemyError, ValueError) as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+
+@router.delete(
+    "/{id_products}",
+)
+async def delete_product(id_product: str):
+    try:
+        products = Products()
+        products.delete(id_product)
+
+        return dict(error=False, detail="Product deleted successfully")
 
     except (SQLAlchemyError, ValueError) as e:
         raise HTTPException(status_code=400, detail=str(e))

@@ -7,8 +7,9 @@ Create Date: 2023-08-10 00:33:38.346168
 """
 from typing import Sequence, Union
 
-from sqlalchemy import Table, Column, Integer, String
+from sqlalchemy import Table, Column, Float, String, DateTime
 from products_api.database import engine, metadata
+from datetime import datetime
 
 
 # revision identifiers, used by Alembic.
@@ -22,8 +23,10 @@ products = Table(
     "products",
     metadata,
     Column("id_product", String(255), primary_key=True),
-    Column("name", String(255)),
-    Column("price", Integer),
+    Column("name", String(255), nullable=False),
+    Column("price", Float, nullable=False),
+    Column("created_at", DateTime, nullable=False, default=datetime.now()),
+    Column("deleted_at", DateTime, nullable=True),
 )
 
 
