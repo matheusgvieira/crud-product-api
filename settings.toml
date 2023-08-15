@@ -9,9 +9,9 @@ reload = true
 database = "mysql"
 host = "localhost"
 name = "products_api"
-password = "password"
+password = "app"
 port = 3306
-uri = "mysql://root:password@localhost:3306/products_api"
+uri = "mysql+pymysql://cpa:products@127.0.0.1:3306/crud_products_api"
 user = "root"
 
 [production]

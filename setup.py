@@ -1,11 +1,11 @@
-"""Python setup.py for project_name package"""
+"""Python setup.py for products_api package"""
 import io
 from setuptools import find_packages, setup
 
 
 def read(*paths, **kwargs):
     """Read the contents of a text file safely.
-    >>> read("project_name", "VERSION")
+    >>> read("products_api", "VERSION")
     '0.1.0'
     >>> read("README.md")
     ...
@@ -38,8 +38,6 @@ setup(
     author="Matheus Gois",
     packages=find_packages(exclude=["tests", ".github"]),
     install_requires=read_requirements("requirements.txt"),
-    entry_points={
-        "console_scripts": ["products_api = products_api.__main__:main"]
-    },
+    entry_points={"console_scripts": ["products_api = products_api.__main__:main"]},
     extras_require={"test": read_requirements("requirements-test.txt")},
 )
