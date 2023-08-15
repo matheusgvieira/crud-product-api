@@ -10,3 +10,6 @@ mypy
 gitchangelog
 mkdocs
 pytest-picked
+pymysql
+alembic
+cryptography
