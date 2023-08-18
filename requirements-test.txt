@@ -2,9 +2,12 @@
 pytest
 coverage
 flake8
+mypy
 black
 isort
 pytest-cov
+pytest-flake8
+pytest-mypy
 codecov
 mypy
 gitchangelog
@@ -15,3 +18,4 @@ alembic
 cryptography
 passlib
 pyjwt
+httpx

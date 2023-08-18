@@ -9,3 +9,4 @@ cryptography==41.0.3
 mysqlclient==2.2.0
 passlib==1.7.4 
 pyjwt==2.8.0
+httpx==0.24.1
