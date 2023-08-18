@@ -7,9 +7,6 @@ from starlette.middleware.cors import CORSMiddleware
 from .config import settings
 from .controllers import main_router
 
-# from fastapi_jwt_auth.exceptions import AuthJWTException
-# from fastapi.responses import JSONResponse
-
 
 description = """
 Products API 🚀
@@ -39,11 +36,6 @@ app = FastAPI(
         "email": "matheusgoisv@gmail.com",
     },
 )
-
-
-# @app.exception_handler(AuthJWTException)
-# def authjwt_exception_handler(request: Request, exc: AuthJWTException):
-#     return JSONResponse(status_code=exc.status_code, content={"detail": exc.message})
 
 
 if settings.server and settings.server.get("cors_origins", None):

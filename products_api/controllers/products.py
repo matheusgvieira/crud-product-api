@@ -1,7 +1,11 @@
 from fastapi import APIRouter
 from sqlalchemy.exc import SQLAlchemyError
 from fastapi import HTTPException
-from products_api.models import Products, ProductsModelCreate, ProductsModelUpdate
+from products_api.models import (
+    ProductsRepository,
+    ProductsModelCreate,
+    ProductsModelUpdate,
+)
 from products_api.utils.removes import remove_key_with_value_none
 
 
@@ -11,7 +15,7 @@ router = APIRouter()
 @router.get("/")
 async def list_products(page: int = 1, limit: int = 10):
     try:
-        products = Products()
+        products = ProductsRepository()
         list_products = products.list(page, limit)
 
         if not list_products:
@@ -35,7 +39,7 @@ async def list_products(page: int = 1, limit: int = 10):
 )
 async def show_product(id_products: str):
     try:
-        products = Products()
+        products = ProductsRepository()
         product_found = products.find_by_id(id_products)
 
         return dict(error=False, item=product_found)
@@ -49,7 +53,7 @@ async def show_product(id_products: str):
 )
 async def create_product(product: ProductsModelCreate):
     try:
-        products = Products()
+        products = ProductsRepository()
         print(product)
         product_created = products.create(product)
 
@@ -66,7 +70,7 @@ async def create_product(product: ProductsModelCreate):
 )
 async def update_product(id_product: str, product: ProductsModelUpdate):
     try:
-        products = Products()
+        products = ProductsRepository()
         product_updated = products.update(
             id_product, remove_key_with_value_none(product.dict())
         )
@@ -84,7 +88,7 @@ async def update_product(id_product: str, product: ProductsModelUpdate):
 )
 async def delete_product(id_product: str):
     try:
-        products = Products()
+        products = ProductsRepository()
         products.delete(id_product)
 
         return dict(error=False, detail="Product deleted successfully")

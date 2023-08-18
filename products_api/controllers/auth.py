@@ -1,30 +1,62 @@
 from fastapi import HTTPException, Depends
-from fastapi_jwt_auth import AuthJWT
 from fastapi import APIRouter
-from products_api.models import Settings, UserLogin
+from products_api.models import UserLogin, UserRepository, UserRegister
+from products_api.config import settings
+from datetime import timedelta
+from products_api.utils.jwt import (
+    create_access_token,
+    get_current_user,
+    get_password_hash,
+    verify_password,
+)
 
 
 router = APIRouter()
 
 
-@AuthJWT.load_config
-def get_config():
-    return Settings()
+@router.post("/login")
+def login(user: UserLogin):
+    user_repository = UserRepository()
+
+    user_found = user_repository.find_by_email(user.email)
+
+    if not user_found:
+        raise HTTPException(status_code=401, detail="Invalid credentials")
+
+    if not verify_password(user.password, user.hashed_password):
+        raise HTTPException(status_code=401, detail="Invalid credentials")
+
+    access_token_expires = timedelta(
+        minutes=settings.server.authjwt_access_token_expires
+    )
+    access_token = create_access_token(
+        data={"sub": user.email}, expires_delta=access_token_expires
+    )
+    return {"access_token": access_token, "token_type": "bearer"}
 
 
-@router.get("/login")
-def login(user: UserLogin, Authorize: AuthJWT = Depends()):
-    if user.email != "test" or user.password != "test":
-        raise HTTPException(status_code=401, detail="Bad username or password")
+@router.post("/register")
+def register_user(user: UserRegister):
+    user_repository = UserRepository()
+    user_found = user_repository.find_by_email(user.email)
 
-    # subject identifier for who this token is for example id or username from database
-    access_token = Authorize.create_access_token(subject=user.email)
-    return {"access_token": access_token}
+    if user_found:
+        raise HTTPException(status_code=400, detail="Username already registered")
+
+    hashed_password = get_password_hash(user.password)
+
+    user_repository.create(
+        dict(name=user.name, email=user.email, password=hashed_password)
+    )
+
+    access_token_expires = timedelta(minutes=access_token_expires)
+    access_token = create_access_token(
+        data={"sub": user.email}, expires_delta=access_token_expires
+    )
+
+    return {"access_token": access_token, "token_type": "bearer"}
 
 
-@app.get("/user")
-def user(Authorize: AuthJWT = Depends()):
-    Authorize.jwt_required()
-
-    current_user = Authorize.get_jwt_subject()
+@router.get("/user")
+def user(current_user: str = Depends(get_current_user)):
     return {"user": current_user}

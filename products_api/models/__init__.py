@@ -10,8 +10,8 @@ from .model import (
     count,
     count_removed,
 )
-from .products import Products, ProductsModelCreate, ProductsModelUpdate
-from .users import UserLogin, Settings
+from .products import ProductsRepository, ProductsModelCreate, ProductsModelUpdate
+from .users import UserLogin, UserRepository, UserRegister
 
 all = [
     create,
@@ -24,9 +24,10 @@ all = [
     find_all_pagination,
     count,
     count_removed,
-    Products,
+    ProductsRepository,
     ProductsModelCreate,
     ProductsModelUpdate,
     UserLogin,
-    Settings,
+    UserRepository,
+    UserRegister,
 ]

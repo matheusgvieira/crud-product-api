@@ -22,7 +22,7 @@ class ProductsModelUpdate(BaseModel):
     price: float | None = None
 
 
-class Products:
+class ProductsRepository:
     def __init__(self) -> None:
         self.data = []
 
