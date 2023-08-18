@@ -1,14 +1,17 @@
 from fastapi import HTTPException, Depends
 from fastapi import APIRouter
-from products_api.models import UserLogin, UserRepository, UserRegister
+from products_api.models import UserLogin, UserRepository
 from products_api.config import settings
-from datetime import timedelta
+from datetime import timedelta, datetime
+from starlette import status
+from products_api.utils.exceptions import LoginError, RegisterError
 from products_api.utils.jwt import (
     create_access_token,
     get_current_user,
     get_password_hash,
     verify_password,
 )
+from products_api.utils.token import get_token, UnauthorizedMessage
 
 
 router = APIRouter()
@@ -16,47 +19,82 @@ router = APIRouter()
 
 @router.post("/login")
 def login(user: UserLogin):
-    user_repository = UserRepository()
+    try:
+        user_repository = UserRepository()
 
-    user_found = user_repository.find_by_email(user.email)
+        user_found = user_repository.find_by_email(user.email)
 
-    if not user_found:
-        raise HTTPException(status_code=401, detail="Invalid credentials")
+        if not user_found:
+            raise HTTPException(status_code=401, detail="Invalid credentials")
 
-    if not verify_password(user.password, user.hashed_password):
-        raise HTTPException(status_code=401, detail="Invalid credentials")
+        if not verify_password(user.password, user_found["password"]):
+            raise HTTPException(status_code=401, detail="Invalid credentials")
 
-    access_token_expires = timedelta(
-        minutes=settings.server.authjwt_access_token_expires
-    )
-    access_token = create_access_token(
-        data={"sub": user.email}, expires_delta=access_token_expires
-    )
-    return {"access_token": access_token, "token_type": "bearer"}
+        access_token_expires = timedelta(
+            minutes=settings.server.authjwt_access_token_expires
+        )
+        access_token = create_access_token(
+            data=dict(
+                email=user_found["email"],
+                id_user=user_found["id_user"],
+                created_at=user_found["created_at"].isoformat(),
+            ),
+            expires_delta=access_token_expires,
+        )
+        return {"access_token": access_token, "token_type": "bearer"}
+    except LoginError as error:
+        raise HTTPException(
+            status_code=400, detail=f"Error ao realizar o login | {error} "
+        )
 
 
 @router.post("/register")
-def register_user(user: UserRegister):
-    user_repository = UserRepository()
-    user_found = user_repository.find_by_email(user.email)
+def register_user(user: UserLogin):
+    try:
+        user_repository = UserRepository()
 
-    if user_found:
-        raise HTTPException(status_code=400, detail="Username already registered")
+        user_found = user_repository.find_by_email(user.email)
 
-    hashed_password = get_password_hash(user.password)
+        if user_found is not None:
+            raise HTTPException(status_code=400, detail="Username already registered")
 
-    user_repository.create(
-        dict(name=user.name, email=user.email, password=hashed_password)
-    )
+        hashed_password = get_password_hash(user.password)
 
-    access_token_expires = timedelta(minutes=access_token_expires)
-    access_token = create_access_token(
-        data={"sub": user.email}, expires_delta=access_token_expires
-    )
+        user_created = user_repository.create(
+            dict(email=user.email, password=hashed_password)
+        )
 
-    return {"access_token": access_token, "token_type": "bearer"}
+        access_token_expires = timedelta(
+            minutes=settings.server.authjwt_access_token_expires
+        )
+
+        print(user_created)
+
+        access_token = create_access_token(
+            data=dict(
+                email=user_created["email"],
+                id_user=str(user_created["id_user"]),
+                created_at=user_created["created_at"].isoformat(),
+            ),
+            expires_delta=access_token_expires,
+        )
+
+        return {
+            "access_token": access_token,
+            "token_type": "bearer",
+            "message": "User created successfully",
+        }
+    except RegisterError as error:
+        raise HTTPException(
+            status_code=400, detail=f"Error ao realizar o registro | {error}"
+        )
 
 
-@router.get("/user")
-def user(current_user: str = Depends(get_current_user)):
-    return {"user": current_user}
+@router.get(
+    "/user",
+    responses={status.HTTP_401_UNAUTHORIZED: dict(model=UnauthorizedMessage)},
+)
+def get_user(token: str = Depends(get_token)):
+    user = get_current_user(token)
+
+    return user

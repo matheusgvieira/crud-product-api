@@ -13,3 +13,5 @@ pytest-picked
 pymysql
 alembic
 cryptography
+passlib
+pyjwt

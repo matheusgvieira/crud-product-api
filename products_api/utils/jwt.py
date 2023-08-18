@@ -19,17 +19,18 @@ def create_access_token(data: dict, expires_delta: timedelta):
     return encoded_jwt
 
 
-def get_current_user(token: str = Depends()):
+def get_current_user(token: str):
     try:
         payload = jwt.decode(
             token,
             settings.server.authjwt_secret_key,
             algorithms=[settings.server.authjwt_algorithm],
         )
-        email = payload.get("sub")
-        if email is None:
+        if payload is None:
             raise HTTPException(status_code=401, detail="Invalid credentials")
-        return email
+
+        payload.pop("exp")
+        return payload
     except jwt.ExpiredSignatureError:
         raise HTTPException(status_code=401, detail="Token has expired")
     except jwt.DecodeError:
