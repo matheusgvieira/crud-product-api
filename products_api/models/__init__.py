@@ -11,6 +11,7 @@ from .model import (
     count_removed,
 )
 from .products import Products, ProductsModelCreate, ProductsModelUpdate
+from .users import UserLogin, Settings
 
 all = [
     create,
@@ -26,4 +27,6 @@ all = [
     Products,
     ProductsModelCreate,
     ProductsModelUpdate,
+    UserLogin,
+    Settings,
 ]

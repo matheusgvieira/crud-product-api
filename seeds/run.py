@@ -3,9 +3,10 @@ import os
 
 def run_seed_scripts():
     seed_folder = f"{os.getcwd()}/seeds"  # Change this to the path of your seeds folder
+    print([file for file in os.listdir(seed_folder) if file.startswith("seed")])
 
     for filename in [
-        file for file in os.listdir(seed_folder) if not file.startswith("run.py")
+        file for file in os.listdir(seed_folder) if file.startswith("seed")
     ]:
         if filename.endswith(".py"):
             script_path = os.path.join(seed_folder, filename)

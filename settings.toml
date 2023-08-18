@@ -4,6 +4,7 @@ host = "127.0.0.1"
 log_level = "debug"
 port = 8000
 reload = true
+authjwt_secret_key = "7f309b0d-a528-48f2-a1bb-e3be2b16e39d"
 
 [development.database]
 database = "mysql"
