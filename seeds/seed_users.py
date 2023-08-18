@@ -11,7 +11,7 @@ user_data = [
     {
         "id_user": "a0e77311-dedb-4adb-bdf0-6a96b4f2ed60",
         "email": "sacgip@wikacih.me",
-        "password": "$2b$12$wY.rvtDBs6cOHooVzgiIku1Qn/J4cwR6KTBcN2Jfn26xlAunH5eZG",  # 12345678
+        "password": "$2b$12$9v0EBBln4Qk/uHFNbiKGvu9edwpXqSI0W9NpksvlOe0e0SRPBhbj6",  # 12345678
     },
 ]
 

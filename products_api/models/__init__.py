@@ -11,7 +11,8 @@ from .model import (
     count_removed,
 )
 from .products import ProductsRepository, ProductsModelCreate, ProductsModelUpdate
-from .users import UserLogin, UserRepository
+from .users import UserLogin, UserRepository, UserLoged
+from .responses import ListResponse
 
 all = [
     create,
@@ -29,4 +30,6 @@ all = [
     ProductsModelUpdate,
     UserLogin,
     UserRepository,
+    ListResponse,
+    UserLoged,
 ]

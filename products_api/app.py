@@ -7,7 +7,6 @@ from starlette.middleware.cors import CORSMiddleware
 from .config import settings
 from .controllers import main_router
 
-
 description = """
 Products API 🚀
 """

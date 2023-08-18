@@ -23,6 +23,13 @@ class ProductsModelUpdate(BaseModel):
     price: Union[str, None] = None
 
 
+class ProductsItemsModel(BaseModel):
+    id_product: str
+    name: str
+    price: float
+    created_at: datetime
+
+
 class ProductsRepository:
     def __init__(self) -> None:
         self.data = []

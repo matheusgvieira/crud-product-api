@@ -1,8 +1,8 @@
 from fastapi import HTTPException, Depends
 from fastapi import APIRouter
-from products_api.models import UserLogin, UserRepository
+from products_api.models import UserLogin, UserRepository, UserLoged
 from products_api.config import settings
-from datetime import timedelta, datetime
+from datetime import timedelta
 from starlette import status
 from products_api.utils.exceptions import LoginError, RegisterError
 from products_api.utils.jwt import (
@@ -11,13 +11,21 @@ from products_api.utils.jwt import (
     get_password_hash,
     verify_password,
 )
-from products_api.utils.token import get_token, UnauthorizedMessage
-
+from products_api.utils.token import get_user_by_token, UnauthorizedMessage
+from passlib.exc import UnknownHashError
+from products_api.providers.logger import AppLogger
 
 router = APIRouter()
+logger = AppLogger()
 
 
-@router.post("/login")
+@router.post(
+    "/login",
+    responses={
+        status.HTTP_200_OK: dict(model=UserLoged),
+        status.HTTP_401_UNAUTHORIZED: dict(model=UnauthorizedMessage),
+    },
+)
 def login(user: UserLogin):
     try:
         user_repository = UserRepository()
@@ -42,9 +50,10 @@ def login(user: UserLogin):
             expires_delta=access_token_expires,
         )
         return {"access_token": access_token, "token_type": "bearer"}
-    except LoginError as error:
+    except (LoginError, UnknownHashError) as error:
+        logger.error(error)
         raise HTTPException(
-            status_code=400, detail=f"Error ao realizar o login | {error} "
+            status_code=400, detail=f"Error ao realizar o login, tente novamente"
         )
 
 
@@ -60,6 +69,8 @@ def register_user(user: UserLogin):
 
         hashed_password = get_password_hash(user.password)
 
+        print(hashed_password)
+
         user_created = user_repository.create(
             dict(email=user.email, password=hashed_password)
         )
@@ -67,8 +78,6 @@ def register_user(user: UserLogin):
         access_token_expires = timedelta(
             minutes=settings.server.authjwt_access_token_expires
         )
-
-        print(user_created)
 
         access_token = create_access_token(
             data=dict(
@@ -94,7 +103,5 @@ def register_user(user: UserLogin):
     "/user",
     responses={status.HTTP_401_UNAUTHORIZED: dict(model=UnauthorizedMessage)},
 )
-def get_user(token: str = Depends(get_token)):
-    user = get_current_user(token)
-
+def get_user(user: dict = Depends(get_user_by_token)):
     return user

@@ -10,6 +10,11 @@ class UserLogin(BaseModel):
     password: str
 
 
+class UserLoged(BaseModel):
+    access_token: str
+    token_type: str
+
+
 class UserRepository:
     def __init__(self) -> None:
         self.data = []
@@ -21,7 +26,6 @@ class UserRepository:
             return None
 
         user = users[0]
-        print("user", user)
         return dict(
             id_user=user[0],
             email=user[1],

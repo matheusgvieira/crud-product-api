@@ -21,6 +21,9 @@ def create_access_token(data: dict, expires_delta: timedelta):
 
 def get_current_user(token: str):
     try:
+        if token is None:
+            raise HTTPException(status_code=401, detail="Token is required")
+
         payload = jwt.decode(
             token,
             settings.server.authjwt_secret_key,

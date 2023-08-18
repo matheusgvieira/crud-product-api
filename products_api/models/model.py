@@ -7,6 +7,18 @@ Session = sessionmaker(bind=engine)
 session = Session()
 
 
+def helth_check():
+    query = text("SELECT 1")
+    session.execute(query)
+    return True
+
+
+def list_tables():
+    query = text("SHOW TABLES")
+    result = session.execute(query).fetchall()
+    return result
+
+
 def create(table: str, values: dict) -> None:
     query = text(
         f"INSERT INTO {table} ({', '.join(values.keys())}) VALUES ({', '.join(value_to_string(value) for value in values.values())})"

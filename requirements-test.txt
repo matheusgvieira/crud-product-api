@@ -19,3 +19,5 @@ cryptography
 passlib
 pyjwt
 httpx
+email-validator
+bcrypt
