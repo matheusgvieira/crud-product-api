@@ -1,12 +1,11 @@
 import io
 import os
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from starlette.middleware.cors import CORSMiddleware
 
 from .config import settings
 from .controllers import main_router
-
 
 description = """
 Products API 🚀
@@ -36,6 +35,7 @@ app = FastAPI(
         "email": "matheusgoisv@gmail.com",
     },
 )
+
 
 if settings.server and settings.server.get("cors_origins", None):
     app.add_middleware(

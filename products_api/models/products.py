@@ -10,6 +10,7 @@ from products_api.models.model import (
 from pydantic import BaseModel
 from datetime import datetime
 import uuid
+from typing import Union
 
 
 class ProductsModelCreate(BaseModel):
@@ -18,11 +19,18 @@ class ProductsModelCreate(BaseModel):
 
 
 class ProductsModelUpdate(BaseModel):
-    name: str | None = None
-    price: float | None = None
+    name: Union[str, None] = None
+    price: Union[float, None] = None
 
 
-class Products:
+class ProductsItemsModel(BaseModel):
+    id_product: str
+    name: str
+    price: float
+    created_at: datetime
+
+
+class ProductsRepository:
     def __init__(self) -> None:
         self.data = []
 
