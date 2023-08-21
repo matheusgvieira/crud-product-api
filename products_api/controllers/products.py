@@ -68,7 +68,7 @@ async def create_product(product: ProductsModelCreate):
         raise HTTPException(status_code=400, detail=str(e))
 
 
-@router.put("/{id_products}", dependencies=[Depends(get_user_by_token)])
+@router.put("/{id_product}", dependencies=[Depends(get_user_by_token)])
 async def update_product(id_product: str, product: ProductsModelUpdate):
     try:
         products = ProductsRepository()
@@ -84,7 +84,7 @@ async def update_product(id_product: str, product: ProductsModelUpdate):
         raise HTTPException(status_code=400, detail=str(e))
 
 
-@router.delete("/{id_products}", dependencies=[Depends(get_user_by_token)])
+@router.delete("/{id_product}", dependencies=[Depends(get_user_by_token)])
 async def delete_product(id_product: str):
     try:
         products = ProductsRepository()

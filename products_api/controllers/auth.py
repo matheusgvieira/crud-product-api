@@ -1,4 +1,4 @@
-from fastapi import HTTPException, Depends
+from fastapi import HTTPException, Depends, Body
 from fastapi import APIRouter
 from products_api.models import UserLogin, UserRepository, UserLoged
 from products_api.config import settings
@@ -26,16 +26,17 @@ logger = AppLogger()
         status.HTTP_401_UNAUTHORIZED: dict(model=UnauthorizedMessage),
     },
 )
-def login(user: UserLogin):
+# def login(payload=Body(...)):
+def login(payload: UserLogin):
     try:
         user_repository = UserRepository()
 
-        user_found = user_repository.find_by_email(user.email)
+        user_found = user_repository.find_by_email(payload.email)
 
         if not user_found:
             raise HTTPException(status_code=401, detail="Invalid credentials")
 
-        if not verify_password(user.password, user_found["password"]):
+        if not verify_password(payload.password, user_found["password"]):
             raise HTTPException(status_code=401, detail="Invalid credentials")
 
         access_token_expires = timedelta(
@@ -49,7 +50,7 @@ def login(user: UserLogin):
             ),
             expires_delta=access_token_expires,
         )
-        return {"access_token": access_token, "token_type": "bearer"}
+        return {"access_token": access_token, "token_type": "Bearer"}
     except (LoginError, UnknownHashError) as error:
         logger.error(error)
         raise HTTPException(
@@ -90,7 +91,7 @@ def register_user(user: UserLogin):
 
         return {
             "access_token": access_token,
-            "token_type": "bearer",
+            "token_type": "Bearer",
             "message": "User created successfully",
         }
     except RegisterError as error:

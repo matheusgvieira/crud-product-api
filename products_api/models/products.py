@@ -20,7 +20,7 @@ class ProductsModelCreate(BaseModel):
 
 class ProductsModelUpdate(BaseModel):
     name: Union[str, None] = None
-    price: Union[str, None] = None
+    price: Union[float, None] = None
 
 
 class ProductsItemsModel(BaseModel):
